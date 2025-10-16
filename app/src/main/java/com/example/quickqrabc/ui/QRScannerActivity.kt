@@ -1,6 +1,5 @@
 package com.example.quickqrabc.ui
 
-import android.Manifest
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -8,16 +7,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.quickqrabc.R
 import com.example.quickqrabc.databinding.ActivityQrScannerBinding
+import com.example.quickqrabc.utils.PermissionUtils
 import com.example.quickqrabc.viewmodel.QRViewModel
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
-import com.journeyapps.barcodescanner.camera.CameraSettings
 
 class QRScannerActivity : AppCompatActivity() {
     
@@ -26,16 +24,6 @@ class QRScannerActivity : AppCompatActivity() {
     private var isFlashOn = false
     private var isAutoCopyEnabled = false
     
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            startCamera()
-        } else {
-            Toast.makeText(this, "Camera permission is required to scan QR codes", Toast.LENGTH_LONG).show()
-            finish()
-        }
-    }
     
     private val callback = BarcodeCallback { result ->
         handleScanResult(result)
@@ -79,16 +67,30 @@ class QRScannerActivity : AppCompatActivity() {
     
     private fun checkCameraPermission() {
         when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED -> {
+            PermissionUtils.isCameraPermissionGranted(this) -> {
                 startCamera()
             }
+            PermissionUtils.shouldShowCameraPermissionRationale(this) -> {
+                showPermissionRationale()
+            }
             else -> {
-                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                PermissionUtils.requestCameraPermission(this)
             }
         }
+    }
+    
+    private fun showPermissionRationale() {
+        AlertDialog.Builder(this)
+            .setTitle("Camera Permission Required")
+            .setMessage("Camera permission is needed to scan QR codes. Please grant permission to continue.")
+            .setPositiveButton("Grant Permission") { _, _ ->
+                PermissionUtils.requestCameraPermission(this)
+            }
+            .setNegativeButton("Cancel") { _, _ ->
+                finish()
+            }
+            .setCancelable(false)
+            .show()
     }
     
     private fun startCamera() {
@@ -161,5 +163,26 @@ class QRScannerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         binding.barcodeView.pause()
+    }
+    
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        
+        PermissionUtils.handlePermissionResult(
+            requestCode = requestCode,
+            permissions = permissions,
+            grantResults = grantResults,
+            onCameraGranted = {
+                startCamera()
+            },
+            onCameraDenied = {
+                Toast.makeText(this, "Camera permission is required to scan QR codes", Toast.LENGTH_LONG).show()
+                finish()
+            }
+        )
     }
 }

@@ -31,9 +31,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuickQRABC">
         
-        <!-- Main Activity -->
+        <!-- Onboarding Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.OnboardingActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -41,6 +41,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         
         <!-- QR Scanner Activity -->
         <activity

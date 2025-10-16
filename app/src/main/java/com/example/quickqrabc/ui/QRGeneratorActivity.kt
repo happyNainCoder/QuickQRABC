@@ -2,6 +2,7 @@ package com.example.quickqrabc.ui
 
 import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
@@ -10,10 +11,12 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.quickqrabc.R
 import com.example.quickqrabc.databinding.ActivityQrGeneratorBinding
+import com.example.quickqrabc.utils.PermissionUtils
 import com.example.quickqrabc.viewmodel.QRViewModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
@@ -52,7 +55,7 @@ class QRGeneratorActivity : AppCompatActivity() {
         }
         
         binding.btnSaveToGallery.setOnClickListener {
-            saveQRToGallery()
+            checkStoragePermissionAndSave()
         }
         
         binding.btnShareQR.setOnClickListener {
@@ -164,6 +167,34 @@ class QRGeneratorActivity : AppCompatActivity() {
         }
     }
     
+    private fun checkStoragePermissionAndSave() {
+        when {
+            PermissionUtils.isStoragePermissionGranted(this) -> {
+                saveQRToGallery()
+            }
+            PermissionUtils.shouldShowStoragePermissionRationale(this) -> {
+                showStoragePermissionRationale()
+            }
+            else -> {
+                PermissionUtils.requestStoragePermission(this)
+            }
+        }
+    }
+    
+    private fun showStoragePermissionRationale() {
+        AlertDialog.Builder(this)
+            .setTitle("Storage Permission Required")
+            .setMessage("Storage permission is needed to save QR codes to your gallery. Please grant permission to continue.")
+            .setPositiveButton("Grant Permission") { _, _ ->
+                PermissionUtils.requestStoragePermission(this)
+            }
+            .setNegativeButton("Cancel") { _, _ ->
+                Toast.makeText(this, "Permission denied. Cannot save QR code.", Toast.LENGTH_SHORT).show()
+            }
+            .setCancelable(false)
+            .show()
+    }
+    
     private fun saveQRToGallery() {
         generatedQRBitmap?.let { bitmap ->
             try {
@@ -215,5 +246,25 @@ class QRGeneratorActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error sharing QR code: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
+    }
+    
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        
+        PermissionUtils.handlePermissionResult(
+            requestCode = requestCode,
+            permissions = permissions,
+            grantResults = grantResults,
+            onStorageGranted = {
+                saveQRToGallery()
+            },
+            onStorageDenied = {
+                Toast.makeText(this, "Storage permission is required to save QR codes", Toast.LENGTH_LONG).show()
+            }
+        )
     }
 }
