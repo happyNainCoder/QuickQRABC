@@ -258,18 +258,53 @@ class OnboardingActivity : AppCompatActivity() {
                 binding.viewPager.currentItem = currentPage + 1
             },
             onCameraDenied = {
-                Toast.makeText(this, "Camera permission denied. You can still generate QR codes and view history.", Toast.LENGTH_LONG).show()
-                binding.viewPager.currentItem = currentPage + 1
+                showCameraPermissionDeniedDialog()
             },
             onStorageGranted = {
                 Toast.makeText(this, "Storage permission granted! You can now save QR codes to gallery.", Toast.LENGTH_SHORT).show()
                 binding.viewPager.currentItem = currentPage + 1
             },
             onStorageDenied = {
-                Toast.makeText(this, "Storage permission denied. You can still use all other features.", Toast.LENGTH_SHORT).show()
-                binding.viewPager.currentItem = currentPage + 1
+                showStoragePermissionDeniedDialog()
             }
         )
+    }
+    
+    private fun showCameraPermissionDeniedDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Camera Permission Skipped")
+            .setMessage("No problem! You can still:\n\n• Generate QR codes\n• View scan history\n• Enable camera later in Settings")
+            .setPositiveButton("Continue") { _, _ ->
+                binding.viewPager.currentItem = currentPage + 1
+            }
+            .setNegativeButton("Enable in Settings") { _, _ ->
+                openAppSettings()
+            }
+            .show()
+    }
+    
+    private fun showStoragePermissionDeniedDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Storage Permission Skipped")
+            .setMessage("That's okay! You can still:\n\n• Generate and view QR codes\n• Share QR codes directly\n• Scan QR codes\n• Save to gallery later via Settings")
+            .setPositiveButton("Continue") { _, _ ->
+                binding.viewPager.currentItem = currentPage + 1
+            }
+            .setNegativeButton("Enable in Settings") { _, _ ->
+                openAppSettings()
+            }
+            .show()
+    }
+    
+    private fun openAppSettings() {
+        try {
+            val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.data = android.net.Uri.fromParts("package", packageName, null)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Cannot open settings", Toast.LENGTH_SHORT).show()
+        }
+        binding.viewPager.currentItem = currentPage + 1
     }
     
     data class OnboardingSlide(
