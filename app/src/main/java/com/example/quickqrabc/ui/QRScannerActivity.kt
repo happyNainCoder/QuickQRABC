@@ -196,9 +196,49 @@ class QRScannerActivity : AppCompatActivity() {
                 startCamera()
             },
             onCameraDenied = {
-                Toast.makeText(this, "Camera permission is required to scan QR codes", Toast.LENGTH_LONG).show()
-                finish()
+                handleCameraPermissionDenied()
             }
         )
+    }
+    
+    private fun handleCameraPermissionDenied() {
+        AlertDialog.Builder(this)
+            .setTitle("Camera Access Required")
+            .setMessage("QR scanning requires camera access. You can:\n\n• Grant permission in Settings\n• Use QR Generator instead\n• View your scan history")
+            .setPositiveButton("Open Settings") { _, _ ->
+                openAppSettings()
+            }
+            .setNegativeButton("QR Generator") { _, _ ->
+                navigateToGenerator()
+            }
+            .setNeutralButton("History") { _, _ ->
+                navigateToHistory()
+            }
+            .setCancelable(false)
+            .show()
+    }
+    
+    private fun openAppSettings() {
+        try {
+            val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.data = android.net.Uri.fromParts("package", packageName, null)
+            startActivity(intent)
+            finish()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Cannot open settings", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+    }
+    
+    private fun navigateToGenerator() {
+        val intent = Intent(this, QRGeneratorActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+    
+    private fun navigateToHistory() {
+        val intent = Intent(this, HistoryActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

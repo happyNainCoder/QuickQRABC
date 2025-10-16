@@ -263,8 +263,34 @@ class QRGeneratorActivity : AppCompatActivity() {
                 saveQRToGallery()
             },
             onStorageDenied = {
-                Toast.makeText(this, "Storage permission is required to save QR codes", Toast.LENGTH_LONG).show()
+                handleStoragePermissionDenied()
             }
         )
+    }
+    
+    private fun handleStoragePermissionDenied() {
+        AlertDialog.Builder(this)
+            .setTitle("Alternative Options Available")
+            .setMessage("Without storage permission, you can still:\n\n• Share QR code directly\n• Copy QR content to clipboard\n• View QR on screen\n• Generate new QR codes")
+            .setPositiveButton("Share QR Code") { _, _ ->
+                shareQRCode()
+            }
+            .setNegativeButton("Grant Permission") { _, _ ->
+                openAppSettings()
+            }
+            .setNeutralButton("Continue") { _, _ ->
+                // Just dismiss, user can continue using other features
+            }
+            .show()
+    }
+    
+    private fun openAppSettings() {
+        try {
+            val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.data = android.net.Uri.fromParts("package", packageName, null)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Cannot open settings", Toast.LENGTH_SHORT).show()
+        }
     }
 }
