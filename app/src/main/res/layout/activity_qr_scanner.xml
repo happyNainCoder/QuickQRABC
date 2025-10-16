@@ -21,16 +21,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Camera Preview -->
-    <com.journeyapps.barcodescanner.DecoratedBarcodeView
-        android:id="@+id/barcodeView"
+    <!-- Camera Preview Container -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:zxing_scanner_layout="@layout/custom_barcode_scanner"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintBottom_toTopOf="@id/bottomControls"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.journeyapps.barcodescanner.BarcodeView
+            android:id="@+id/barcodeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Scanning Instructions Overlay -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+            android:text="Point camera at QR code"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:background="#80000000"
+            android:padding="12dp"
+            android:layout_marginHorizontal="16dp"
+            android:gravity="center" />
+
+    </FrameLayout>
 
     <!-- Bottom Controls -->
     <LinearLayout

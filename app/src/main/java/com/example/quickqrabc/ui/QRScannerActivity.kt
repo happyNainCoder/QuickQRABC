@@ -31,14 +31,20 @@ class QRScannerActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityQrScannerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         
-        viewModel = ViewModelProvider(this)[QRViewModel::class.java]
-        
-        setupToolbar()
-        setupClickListeners()
-        checkCameraPermission()
+        try {
+            binding = ActivityQrScannerBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+            
+            viewModel = ViewModelProvider(this)[QRViewModel::class.java]
+            
+            setupToolbar()
+            setupClickListeners()
+            checkCameraPermission()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error initializing camera: ${e.message}", Toast.LENGTH_LONG).show()
+            finish()
+        }
     }
     
     private fun setupToolbar() {
@@ -94,8 +100,12 @@ class QRScannerActivity : AppCompatActivity() {
     }
     
     private fun startCamera() {
-        binding.barcodeView.decodeContinuous(callback)
-        binding.barcodeView.resume()
+        try {
+            binding.barcodeView.decodeContinuous(callback)
+            binding.barcodeView.resume()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error starting camera: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
     
     private fun handleScanResult(result: BarcodeResult) {
@@ -124,13 +134,19 @@ class QRScannerActivity : AppCompatActivity() {
     }
     
     private fun toggleFlash() {
-        isFlashOn = !isFlashOn
-        if (isFlashOn) {
-            binding.barcodeView.setTorchOn()
-            binding.btnFlash.setIconResource(R.drawable.ic_flash_on)
-        } else {
-            binding.barcodeView.setTorchOff()
-            binding.btnFlash.setIconResource(R.drawable.ic_flash_off)
+        try {
+            isFlashOn = !isFlashOn
+            val cameraSettings = binding.barcodeView.cameraSettings
+            if (isFlashOn) {
+                cameraSettings.requestedCameraId = 0 // Back camera
+                binding.barcodeView.setTorch(true)
+                binding.btnFlash.setIconResource(R.drawable.ic_flash_on)
+            } else {
+                binding.barcodeView.setTorch(false)
+                binding.btnFlash.setIconResource(R.drawable.ic_flash_off)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Flash not available", Toast.LENGTH_SHORT).show()
         }
     }
     
