@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="wifi_security_types">
+        <item>WPA</item>
+        <item>WEP</item>
+        <item>Open</item>
+    </string-array>
+</resources>

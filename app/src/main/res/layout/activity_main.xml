@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    tools:context=".MainActivity">
+
+    <!-- App Bar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorSurface"
+        app:title="QuickQR"
+        app:titleTextColor="?attr/colorOnSurface"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- App Logo/Icon -->
+    <ImageView
+        android:id="@+id/appIcon"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="48dp"
+        android:src="@drawable/ic_launcher_foreground"
+        android:background="@drawable/circle_background"
+        android:scaleType="centerInside"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Welcome Text -->
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Welcome to QuickQR"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        app:layout_constraintTop_toBottomOf="@id/appIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/subtitleText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="32dp"
+        android:text="Scan and generate QR codes with ease"
+        android:textSize="16sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/welcomeText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Scan QR Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnScanQR"
+        android:layout_width="0dp"
+        android:layout_height="72dp"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="48dp"
+        android:text="Scan QR Code"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:icon="@drawable/ic_qr_scanner"
+        app:iconGravity="start"
+        app:iconSize="32dp"
+        app:cornerRadius="36dp"
+        style="@style/Widget.Material3.Button"
+        app:layout_constraintTop_toBottomOf="@id/subtitleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Generate QR Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGenerateQR"
+        android:layout_width="0dp"
+        android:layout_height="72dp"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Generate QR Code"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:icon="@drawable/ic_qr_generate"
+        app:iconGravity="start"
+        app:iconSize="32dp"
+        app:cornerRadius="36dp"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        app:layout_constraintTop_toBottomOf="@id/btnScanQR"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- History Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnHistory"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="16dp"
+        android:text="View History"
+        android:textSize="16sp"
+        app:icon="@drawable/ic_history"
+        app:iconGravity="start"
+        app:iconSize="24dp"
+        app:cornerRadius="28dp"
+        style="@style/Widget.Material3.Button.TextButton"
+        app:layout_constraintTop_toBottomOf="@id/btnGenerateQR"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
